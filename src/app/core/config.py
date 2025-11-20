@@ -7,8 +7,15 @@ from pydantic import SecretStr, computed_field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class EnvironmentOption(str, Enum):
+    LOCAL = "local"
+    STAGING = "staging"
+    PRODUCTION = "production"
+
+
 class AppSettings(BaseSettings):
-    APP_NAME: str = "FastAPI app"
+    APP_NAME: str = "My Project"
+    APP_VERSION: str = "0.1"
     APP_DESCRIPTION: str | None = None
     APP_VERSION: str | None = None
     APP_BACKEND_HOST: str = "http://localhost:8000"
@@ -27,6 +34,10 @@ class AppSettings(BaseSettings):
         return host
 
 
+class EnvironmentSettings(BaseSettings):
+    ENVIRONMENT: EnvironmentOption = EnvironmentOption.LOCAL
+
+
 class CryptSettings(BaseSettings):
     SECRET_KEY: SecretStr = SecretStr("secret-key")
     ALGORITHM: str = "HS256"
@@ -40,8 +51,8 @@ class DatabaseSettings(BaseSettings):
 
 class PostgresSettings(DatabaseSettings):
     POSTGRES_USER: str = "postgres"
-    POSTGRES_PASSWORD: str = "postgres"
-    POSTGRES_SERVER: str = "localhost"
+    POSTGRES_PASSWORD: str = "password"
+    POSTGRES_SERVER: str = "db"
     POSTGRES_PORT: int = 5432
     POSTGRES_DB: str = "postgres"
     POSTGRES_ASYNC_PREFIX: str = "postgresql+asyncpg://"
@@ -63,7 +74,7 @@ class FirstUserSettings(BaseSettings):
     ADMIN_NAME: str = "admin"
     ADMIN_EMAIL: str = "admin@admin.com"
     ADMIN_USERNAME: str = "admin"
-    ADMIN_PASSWORD: str = "!Ch4ng3Th1sP4ssW0rd!"
+    ADMIN_PASSWORD: str = "password"
 
 
 class TestSettings(BaseSettings):
@@ -71,7 +82,7 @@ class TestSettings(BaseSettings):
 
 
 class RedisCacheSettings(BaseSettings):
-    REDIS_CACHE_HOST: str = "localhost"
+    REDIS_CACHE_HOST: str = "redis"
     REDIS_CACHE_PORT: int = 6379
 
     @computed_field  # type: ignore[prop-decorator]
@@ -80,23 +91,23 @@ class RedisCacheSettings(BaseSettings):
         return f"redis://{self.REDIS_CACHE_HOST}:{self.REDIS_CACHE_PORT}"
 
 
-class ClientSideCacheSettings(BaseSettings):
-    CLIENT_CACHE_MAX_AGE: int = 60
-
-
 class RedisQueueSettings(BaseSettings):
-    REDIS_QUEUE_HOST: str = "localhost"
+    REDIS_QUEUE_HOST: str = "redis"
     REDIS_QUEUE_PORT: int = 6379
 
 
 class RedisRateLimiterSettings(BaseSettings):
-    REDIS_RATE_LIMIT_HOST: str = "localhost"
+    REDIS_RATE_LIMIT_HOST: str = "redis"
     REDIS_RATE_LIMIT_PORT: int = 6379
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def REDIS_RATE_LIMIT_URL(self) -> str:
         return f"redis://{self.REDIS_RATE_LIMIT_HOST}:{self.REDIS_RATE_LIMIT_PORT}"
+
+
+class ClientSideCacheSettings(BaseSettings):
+    CLIENT_CACHE_MAX_AGE: int = 60
 
 
 class DefaultRateLimitSettings(BaseSettings):
@@ -123,16 +134,6 @@ class CRUDAdminSettings(BaseSettings):
     CRUD_ADMIN_REDIS_DB: int = 0
     CRUD_ADMIN_REDIS_PASSWORD: str | None = "None"
     CRUD_ADMIN_REDIS_SSL: bool = False
-
-
-class EnvironmentOption(str, Enum):
-    LOCAL = "local"
-    STAGING = "staging"
-    PRODUCTION = "production"
-
-
-class EnvironmentSettings(BaseSettings):
-    ENVIRONMENT: EnvironmentOption = EnvironmentOption.LOCAL
 
 
 class CORSSettings(BaseSettings):
