@@ -163,7 +163,7 @@ class CORSSettings(BaseSettings):
 
 
 class AuthSettings(BaseSettings):
-    ENABLE_LOCAL_AUTH: bool = True
+    ENABLE_PASSWORD_AUTH: bool = True
     GOOGLE_CLIENT_ID: str | None = None
     GOOGLE_CLIENT_SECRET: str | None = None
     MICROSOFT_CLIENT_ID: str | None = None
