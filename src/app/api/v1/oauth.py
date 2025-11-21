@@ -4,6 +4,7 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, Request, Response
 from fastapi_sso.sso.base import OpenID, SSOBase
+from fastapi_sso.sso.github import GithubSSO
 from fastapi_sso.sso.google import GoogleSSO
 from fastapi_sso.sso.microsoft import MicrosoftSSO
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -112,7 +113,6 @@ class GoogleOAuthProvider(BaseOAuthProvider):
     }
 
 
-# TODO: There is a bug in fastapi-sso, it does not return the email address
 class MicrosoftOAuthProvider(BaseOAuthProvider):
     sso_provider = MicrosoftSSO
     provider_config = {
@@ -122,5 +122,14 @@ class MicrosoftOAuthProvider(BaseOAuthProvider):
     }
 
 
+class GithubSSOProvider(BaseOAuthProvider):
+    sso_provider = GithubSSO
+    provider_config = {
+        "client_id": settings.GITHUB_CLIENT_ID,
+        "client_secret": settings.GITHUB_CLIENT_SECRET,
+    }
+
+
 GoogleOAuthProvider(router)
 MicrosoftOAuthProvider(router)
+GithubSSOProvider(router)

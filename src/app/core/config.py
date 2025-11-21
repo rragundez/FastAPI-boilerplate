@@ -169,6 +169,8 @@ class AuthSettings(BaseSettings):
     MICROSOFT_CLIENT_ID: str | None = None
     MICROSOFT_CLIENT_SECRET: str | None = None
     MICROSOFT_TENANT: str | None = None
+    GITHUB_CLIENT_ID: str | None = None
+    GITHUB_CLIENT_SECRET: str | None = None
 
 
 class Settings(
