@@ -171,6 +171,7 @@ class AuthSettings(BaseSettings):
     MICROSOFT_TENANT: str | None = None
     GITHUB_CLIENT_ID: str | None = None
     GITHUB_CLIENT_SECRET: str | None = None
+    AVATAR_DEFAULT_COLORS: list[str] = ["#a3d9d9", "#B5B7E8", "#CCEECC", "#e69ddc", "#e8a445"]
 
 
 class Settings(
