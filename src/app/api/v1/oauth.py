@@ -1,3 +1,4 @@
+import random
 import secrets
 from abc import ABC
 from typing import Any
@@ -9,6 +10,7 @@ from fastapi_sso.sso.google import GoogleSSO
 from fastapi_sso.sso.microsoft import MicrosoftSSO
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ...api.dependencies import get_current_user
 from ...core.config import settings
 from ...core.db.database import async_get_db
 from ...core.exceptions.http_exceptions import UnauthorizedException
@@ -17,8 +19,8 @@ from ...core.security import (
     create_refresh_token,
 )
 from ...crud.crud_users import crud_users
-from ...schemas.user import UserCreate, UserRead
-from .users import write_user
+from ...schemas.user import UserCreate, UserRead, UserUpdate
+from .users import patch_user, write_user
 
 router = APIRouter(tags=["login", "oauth"])
 
@@ -76,11 +78,20 @@ class BaseOAuthProvider(ABC):
             raise UnauthorizedException(f"Invalid response from {self.provider_name.title()} OAuth.")
 
         db_user = await crud_users.get(db=db, email=oauth_user.email, is_deleted=False, schema_to_select=UserRead)
+        user_create = await self._get_user_details(oauth_user)
         if not db_user:
-            user_create = await self._get_user_details(oauth_user)
             db_user = await write_user(request=request, user=user_create, db=db)
-
         access_token = await self._create_and_set_token(response, db_user)
+        current_user = await get_current_user(token=access_token, db=db)
+        user_update = UserUpdate(
+            name=user_create.name,
+            username=user_create.username,
+            email=user_create.email,
+            profile_image_url=user_create.profile_image_url,
+        )
+        await patch_user(
+            request=request, username=db_user["username"], values=user_update, current_user=current_user, db=db
+        )
         return {"access_token": access_token, "token_type": "bearer"}
 
     async def _get_user_details(self, oauth_user: OpenID) -> UserCreate:
@@ -93,15 +104,21 @@ class BaseOAuthProvider(ABC):
             raise UnauthorizedException(f"Invalid response from {self.provider_name.title()} OAuth.")
         username = oauth_user.email.split("@")[0]
         name = oauth_user.display_name or username
-
+        random_password = secrets.token_urlsafe(32)
         # Create a random password for OAuth users.
         # It can still be changed if the user requests login with password.
-        random_password = secrets.token_urlsafe(32)
+        picture = oauth_user.picture
+        if not picture:
+            initials = [word[0] for word in name.split()]
+            initials = "+".join(initials[:2])
+            color = random.choice(settings.AVATAR_DEFAULT_COLORS).lstrip("#")
+            picture = f"https://ui-avatars.com/api/?name={initials}&background={color}"
         return UserCreate(
             email=oauth_user.email,
             name=name,
             password=random_password,
             username=username,
+            profile_image_url=picture,
         )
 
 
