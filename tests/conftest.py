@@ -66,6 +66,7 @@ def sample_user_data():
         "username": fake.user_name(),
         "email": fake.email(),
         "password": fake.password(),
+        "profile_image_url": fake.image_url(),
     }
 
 

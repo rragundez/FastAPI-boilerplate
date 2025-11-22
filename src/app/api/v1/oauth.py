@@ -109,8 +109,8 @@ class BaseOAuthProvider(ABC):
         # It can still be changed if the user requests login with password.
         picture = oauth_user.picture
         if not picture:
-            initials = [word[0] for word in name.split()]
-            initials = "+".join(initials[:2])
+            initials_list = [word[0] for word in name.split()]
+            initials = "+".join(initials_list[:2])
             color = random.choice(settings.AVATAR_DEFAULT_COLORS).lstrip("#")
             picture = f"https://ui-avatars.com/api/?name={initials}&background={color}"
         return UserCreate(
