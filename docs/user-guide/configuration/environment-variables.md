@@ -274,7 +274,6 @@ services:
   db:           # PostgreSQL database
   redis:        # Redis for caching/queues
   worker:       # ARQ background task worker
-  nginx:        # Reverse proxy (optional)
 ```
 
 ## Python Settings Classes

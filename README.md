@@ -1,3 +1,5 @@
+# ALMOST ALL DOCUMENTATION WILL HAVE TO BE UPDATED TO REFLECT THE CHANGES AND THE SIMPLIFICATION OF BEING CONTAINER FIRST CONFIGURATION, BETTER TO DO THIS AFTER THE CODE IS DONE AND AGREED UPON. I STARTED BUT I DO NOT WANT TO REPEAT OR REDO SECTIONS SO BETTER TO WAIT ON THE FEEDBACK ON CODE CHANGES I THINK.
+
 <h1 align="center"> Benav Labs FastAPI boilerplate</h1>
 <p align="center" markdown=1>
   <i><b>Batteries-included FastAPI starter</b> with production-ready defaults, optional modules, and clear docs.</i>
@@ -30,143 +32,75 @@
 
 ## Features
 
-* ⚡️ Fully async FastAPI + SQLAlchemy 2.0
-* 🧱 Pydantic v2 models & validation
-* 🔐 JWT auth (access + refresh), cookies for refresh
-* 👮 Rate limiter + tiers (free/pro/etc.)
-* 🧰 FastCRUD for efficient CRUD & pagination
-* 🧑‍💼 **CRUDAdmin**: minimal admin panel (optional)
-* 🚦 ARQ background jobs (Redis)
-* 🧊 Redis caching (server + client-side headers)
-* 🌐 Configurable CORS middleware for frontend integration
-* 🐳 One-command Docker Compose
-* 🚀 NGINX & Gunicorn recipes for prod
+- ⚡️ Fully async FastAPI + SQLAlchemy 2.0
+- 🧱 Pydantic v2 models & validation
+- 🔐 JWT auth (access + refresh), cookies for refresh
+- 👮 Rate limiter + tiers (free/pro/etc.)
+- 🧰 FastCRUD for efficient CRUD & pagination
+- 🧑‍💼 **CRUDAdmin**: minimal admin panel (optional)
+- 🚦 ARQ background jobs (Redis)
+- 🧊 Redis caching (server + client-side headers)
+- 🌐 Configurable CORS middleware for frontend integration
+- 🐳 One-command Docker Compose
+- 🚀 Optimized for containarized deployments
 
 ## Why and When to use it
 
 **Perfect if you want:**
 
-* A pragmatic starter with auth, CRUD, jobs, caching and rate-limits
-* **Sensible defaults** with the freedom to opt-out of modules
-* **Docs over boilerplate** in README - depth lives in the site
+- A pragmatic starter with auth, CRUD, jobs, caching and rate-limits
+- **Sensible defaults** with the freedom to opt-out of modules
+- **Docs over boilerplate** in README - depth lives in the site
 
 > **Not a fit** if you need a monorepo microservices scaffold - [see the docs](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/project-structure/) for pointers.
 
 **What you get:**
 
-* **App**: FastAPI app factory, [env-aware docs](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/development/) exposure
-* **Auth**: [JWT access/refresh](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/authentication/), logout via token blacklist
-* **DB**: Postgres + SQLAlchemy 2.0, [Alembic migrations](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/database/)
-* **CRUD**: [FastCRUD generics](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/database/crud/) (get, get_multi, create, update, delete, joins)
-* **Caching**: [decorator-based endpoints cache](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/caching/); client cache headers
-* **Queues**: [ARQ worker](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/background-tasks/) (async jobs), Redis connection helpers
-* **Rate limits**: [per-tier + per-path rules](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/rate-limiting/)
-* **Admin**: [CRUDAdmin views](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/admin-panel/) for common models (optional)
+- **App**: FastAPI app factory, [env-aware docs](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/development/) exposure
+- **Auth**: [JWT access/refresh](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/authentication/), logout via token blacklist
+- **DB**: Postgres + SQLAlchemy 2.0, [Alembic migrations](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/database/)
+- **CRUD**: [FastCRUD generics](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/database/crud/) (get, get_multi, create, update, delete, joins)
+- **Caching**: [decorator-based endpoints cache](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/caching/); client cache headers
+- **Queues**: [ARQ worker](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/background-tasks/) (async jobs), Redis connection helpers
+- **Rate limits**: [per-tier + per-path rules](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/rate-limiting/)
+- **Admin**: [CRUDAdmin views](https://benavlabs.github.io/FastAPI-boilerplate/user-guide/admin-panel/) for common models (optional)
 
 This is what we've been using in production apps. Several applications running in production started from this boilerplate as their foundation - from SaaS platforms to internal tools. It's proven, stable technology that works together reliably. Use this as the foundation for whatever you want to build on top.
 
 > **Building an AI SaaS?** Skip even more setup with [**FastroAI**](https://fastro.ai) - our production-ready template with AI integration, payments, and frontend included.
 
-## TL;DR - Quickstart
+## Quickstart
 
-Use the template on GitHub, create your repo, then:
+1. Create your repository from this [template on GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
 
-```bash
-git clone https://github.com/<you>/FastAPI-boilerplate
-cd FastAPI-boilerplate
-```
+1. Clone your repository.
 
-**Quick setup:** Run the interactive setup script to choose your deployment configuration:
+1. Deploy it locally
 
-```bash
-./setup.py
-```
+   ```
+   docker compose up
+   ```
 
-Or directly specify the deployment type: `./setup.py local`, `./setup.py staging`, or `./setup.py production`.
-
-The script copies the right files for your deployment scenario. Here's what each option sets up:
-
-### Option 1: Local development with Uvicorn
-
-Best for: **Development and testing**
-
-**Copies:**
-
-- `scripts/local_with_uvicorn/Dockerfile` → `Dockerfile`
-- `scripts/local_with_uvicorn/docker-compose.yml` → `docker-compose.yml`
-- `scripts/local_with_uvicorn/.env.example` → `src/.env`
-
-Sets up Uvicorn with auto-reload enabled. The example environment values work fine for development.
-
-**Manual setup:** `./setup.py local` or copy the files above manually.
-
-### Option 2: Staging with Gunicorn managing Uvicorn workers
-
-Best for: **Staging environments and load testing**
-
-**Copies:**
-
-- `scripts/gunicorn_managing_uvicorn_workers/Dockerfile` → `Dockerfile`
-- `scripts/gunicorn_managing_uvicorn_workers/docker-compose.yml` → `docker-compose.yml`
-- `scripts/gunicorn_managing_uvicorn_workers/.env.example` → `src/.env`
-
-Sets up Gunicorn managing multiple Uvicorn workers for production-like performance testing.
-
-> [!WARNING]
-> Change `SECRET_KEY` and passwords in the `.env` file for staging environments.
-
-**Manual setup:** `./setup.py staging` or copy the files above manually.
-
-### Option 3: Production with NGINX
-
-Best for: **Production deployments**
-
-**Copies:**
-
-- `scripts/production_with_nginx/Dockerfile` → `Dockerfile`
-- `scripts/production_with_nginx/docker-compose.yml` → `docker-compose.yml`
-- `scripts/production_with_nginx/.env.example` → `src/.env`
-
-Sets up NGINX as reverse proxy with Gunicorn + Uvicorn workers for production.
-
-> [!CAUTION]
-> You MUST change `SECRET_KEY`, all passwords, and sensitive values in the `.env` file before deploying!
-
-**Manual setup:** `./setup.py production` or copy the files above manually.
-
----
-
-**Start your application:**
-
-```bash
-docker compose up
-```
-
-**Access your app:**
-- **Local**: http://127.0.0.1:8000 (auto-reload enabled) → [API docs](http://127.0.0.1:8000/docs)
-- **Staging**: http://127.0.0.1:8000 (production-like performance)
-- **Production**: http://localhost (NGINX reverse proxy)
+1. Open the API Swagger `http://localhost:8000/docs`
 
 ### Next steps
 
 **Create your first admin user:**
+
 ```bash
 docker compose run --rm create_superuser
 ```
 
 **Run database migrations** (if you add models):
+
 ```bash
 cd src && uv run alembic revision --autogenerate && uv run alembic upgrade head
 ```
 
 **Test background jobs:**
+
 ```bash
 curl -X POST 'http://127.0.0.1:8000/api/v1/tasks/task?message=hello'
-```
-
-**Or run locally without Docker:**
-```bash
-uv sync && uv run uvicorn src.app.main:app --reload
 ```
 
 > Full setup (from-scratch, .env examples, PostgreSQL & Redis, gunicorn, nginx) lives in the [docs](https://benavlabs.github.io/FastAPI-boilerplate/getting-started/installation/).
@@ -177,8 +111,8 @@ Create `src/.env` and set **app**, **database**, **JWT**, and **environment** se
 
 [https://benavlabs.github.io/FastAPI-boilerplate/getting-started/configuration/](https://benavlabs.github.io/FastAPI-boilerplate/getting-started/configuration/)
 
-* `ENVIRONMENT=local|staging|production` controls API docs exposure
-* Set `ADMIN_*` to enable the first admin user
+- `ENVIRONMENT=local|staging|production` controls API docs exposure
+- Set `ADMIN_*` to enable the first admin user
 
 ## Common tasks
 
