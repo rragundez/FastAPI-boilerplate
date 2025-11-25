@@ -17,7 +17,6 @@ class AppSettings(BaseSettings):
     APP_NAME: str = "My Project"
     APP_VERSION: str = "0.1"
     APP_DESCRIPTION: str | None = None
-    APP_VERSION: str | None = None
     APP_BACKEND_HOST: str = "http://localhost:8000"
     APP_FRONTEND_HOST: str | None = None
     LICENSE_NAME: str | None = None
