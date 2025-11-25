@@ -17,6 +17,7 @@ import asyncio
 import json
 import logging
 import os
+import sys
 
 import fire
 from app.api.v1.users import write_user_internal
@@ -24,6 +25,9 @@ from app.core.db.database import local_session
 from app.core.security import get_password_hash
 from app.schemas.user import UserCreateInternal
 from fastcrud.exceptions.http_exceptions import DuplicateValueException
+
+from . import CREATE_DEFAULT_SUPERUSER_CHECKSUM as EXPECTED_CHECKSUM
+from .utils import ScriptIntegrityError, verify_script_integrity
 
 logger = logging.getLogger(os.path.basename(__file__))
 
@@ -94,4 +98,10 @@ def main(password: str):
 
 
 if __name__ == "__main__":
-    fire.Fire(main)
+    try:
+        verify_script_integrity(os.path.abspath(__file__), EXPECTED_CHECKSUM)
+    except ScriptIntegrityError as e:
+        logger.error(e)
+        sys.exit(1)  # Exit with failure code
+    else:
+        fire.Fire(main)
