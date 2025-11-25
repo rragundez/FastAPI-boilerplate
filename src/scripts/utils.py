@@ -1,3 +1,29 @@
+import datetime
+import getpass
+import os
+import socket
+
+
+def get_audit_info(script_name: str) -> dict:
+    """Returns a dictionary with audit details about the script execution environment."""
+    user = getpass.getuser()
+    hostname = socket.gethostname()
+    try:
+        ip = socket.gethostbyname(hostname)
+    except Exception:
+        ip = None
+    cwd = os.getcwd()
+    now = datetime.datetime.now().isoformat()
+    return {
+        "user": user,
+        "hostname": hostname,
+        "ip": ip,
+        "cwd": cwd,
+        "script": os.path.abspath(script_name),
+        "time": now,
+    }
+
+
 import hashlib
 
 

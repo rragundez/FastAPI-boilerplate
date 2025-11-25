@@ -27,9 +27,13 @@ from app.schemas.user import UserCreateInternal
 from fastcrud.exceptions.http_exceptions import DuplicateValueException
 
 from . import CREATE_DEFAULT_SUPERUSER_CHECKSUM as EXPECTED_CHECKSUM
-from .utils import ScriptIntegrityError, verify_script_integrity
+from .utils import ScriptIntegrityError, get_audit_info, verify_script_integrity
 
-logger = logging.getLogger(os.path.basename(__file__))
+SCRIPT_PATH = os.path.abspath(__file__)
+SCRIPT_NAME = os.path.basename(__file__)
+logger = logging.getLogger(SCRIPT_NAME)
+audit_info = get_audit_info(SCRIPT_PATH)
+logger.warning(f"Script being run by: {json.dumps(audit_info, default=str, indent=2)}")
 
 # Do not change these default values, read the file docstrings for context
 DEFAULT_NAME = "Default Superuser"
@@ -38,7 +42,7 @@ DEFAULT_EMAIL = "default.superuser@superuser.com"
 
 
 async def async_main(password: str):
-    logger.info(f"Running script {os.path.basename(__file__)}")
+    logger.info(f"Running script {SCRIPT_NAME}")
     logger.debug("Creating hashed password")
     hashed_password = get_password_hash(password)
     logger.debug("Preparing superuser data")
@@ -99,7 +103,7 @@ def main(password: str):
 
 if __name__ == "__main__":
     try:
-        verify_script_integrity(os.path.abspath(__file__), EXPECTED_CHECKSUM)
+        verify_script_integrity(SCRIPT_PATH, EXPECTED_CHECKSUM)
     except ScriptIntegrityError as e:
         logger.error(e)
         sys.exit(1)  # Exit with failure code
