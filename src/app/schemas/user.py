@@ -39,6 +39,7 @@ class UserCreateInternal(UserBase):
     model_config = ConfigDict(extra="forbid")
 
     hashed_password: str | None
+    is_superuser: bool = False
 
 
 class UserUpdate(BaseModel):

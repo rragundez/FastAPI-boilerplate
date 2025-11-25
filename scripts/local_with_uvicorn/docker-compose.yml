@@ -13,6 +13,7 @@ services:
       - redis
     volumes:
       - ./src/app:/code/app
+      - ./src/scripts:/code/scripts
       - .env:/code/.env
 
   worker:
